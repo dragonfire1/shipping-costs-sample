@@ -39,10 +39,14 @@ def makeWebhookResult(req):
     result = req.get("result")
     parameters = result.get("parameters")
     date = parameters.get("date-period")
+    date_orginal = parameters.get("date-period.orginal")
 
-    cost = {'Europe':100, 'North America':200, 'South America':300, 'Asia':400, 'Africa':500}
+    performance = {'March':100, 'April':200, 'May':300, 'June':400, 'July':500}
 
-    speech = "The performance is " + str(date) + " is "+str(cost['North America'])
+    if date_orginal in performance:
+        speech = "The performance for " + str(date_orginal) + " is " + str(performance[date_orginal])
+    else:
+        speech = "The performance for " + str(date) + " is "+str(performance['April'])
 
     print("Response:")
     print(speech)
