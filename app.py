@@ -39,7 +39,7 @@ def makeWebhookResult(req):
     result = req.get("result")
     parameters = result.get("parameters")
     date = parameters.get("date-period")
-    date_original = parameters.get("date-period.original")
+    date_original = parameters.get("date-period-original")
 
     performance = {'March':100, 'April':200, 'May':300, 'June':400, 'July':500}
 
