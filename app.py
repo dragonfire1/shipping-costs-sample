@@ -28,15 +28,21 @@ def webhook():
     return r
 
 def makeWebhookResult(req):
-    if req.get("result").get("action") != "shipping.cost":
-        return {}
+    if req.get("result").get("action") != "support.performace_try":
+        return {
+        "speech": "No such action",
+        "displayText": "no such action",
+        #"data": {},
+        # "contextOut": [],
+        "source": "apiai-performance-chat-bot-python"
+    }
     result = req.get("result")
     parameters = result.get("parameters")
-    zone = parameters.get("shipping-zone")
+    date = parameters.get("date-period")
 
     cost = {'Europe':100, 'North America':200, 'South America':300, 'Asia':400, 'Africa':500}
 
-    speech = "The cost of shipping to " + zone + " is " + str(cost[zone]) + " euros."
+    speech = "The performance is " + str(date) + " is "+cost['North America']
 
     print("Response:")
     print(speech)
@@ -46,7 +52,7 @@ def makeWebhookResult(req):
         "displayText": speech,
         #"data": {},
         # "contextOut": [],
-        "source": "apiai-onlinestore-shipping"
+        "source": "apiai-performance-chat-bot-python"
     }
 
 
