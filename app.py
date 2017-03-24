@@ -41,9 +41,9 @@ def makeWebhookResult(req):
     date = parameters.get("date-period")
     date_original = parameters.get("date-period-original")
 
-    performance = {"March":100, "April":200, "May":300, "June":400, "July":500}
+    performance = {"march":100, "april":200, "may":300, "june":400, "july":500}
 
-    if date_original in performance:
+    if date_original.lower() in performance:
         speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original)])
     else:
         speech = "The performance for " + str(date) + " is "+str(performance['April'])
