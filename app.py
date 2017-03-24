@@ -46,7 +46,7 @@ def makeWebhookResult(req):
     if date_original.lower() in performance:
         speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original)])
     else:
-        speech = "The performance for " + str(date) + " is "+str(performance['April'])
+        speech = "The performance for " + str(date) + " is "+str(performance['april'])
 
     print("Response:")
     print(speech)
