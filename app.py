@@ -4,6 +4,12 @@ import urllib
 import json
 import os
 
+from dateutil import parser
+
+##Custom connector
+from db_connector import Connector
+##
+
 from flask import Flask
 from flask import request
 from flask import make_response
@@ -11,6 +17,10 @@ from flask import make_response
 # Flask app should start in global layout
 app = Flask(__name__)
 
+def query_exec(query,conn):
+    curr = conn.cursor()
+    curr.execute(query)
+    return curr
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -42,11 +52,21 @@ def makeWebhookResult(req):
     date_original = parameters.get("date-period-original")
 
     performance = {"march":100, "april":200, "may":300, "june":400, "july":500}
+    date_intial = date.split("/")[0]
+    day = parser.parse(date_intial).day
+    result=''
+    try:
+        conn = Connector().getConn();
+        result = query_exec("select * from pres_w_rx_repatha_short limit 1 offset "+ str(day), conn)
+    except  ValueError:
+        print ValueError
 
-    if date_original.lower() in performance:
-        speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
-    else:
-        speech = "The performance for " + str(date) + " is "+str(performance['april'])
+    speech ="The performance for "+str(date)+"is" + str(result.fetchall()[0][13])
+
+    # if date_original.lower() in performance:
+    #     speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
+    # else:
+    #     speech = "The performance for " + str(result.fetchall[1]) + " is "+str(performance['april'])
 
     print("Response:")
     print(speech)
@@ -66,3 +86,4 @@ if __name__ == '__main__':
     print "Starting app on port %d" % port
 
     app.run(debug=True, port=port, host='0.0.0.0')
+
