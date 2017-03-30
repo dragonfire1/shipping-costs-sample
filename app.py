@@ -52,15 +52,15 @@ def makeWebhookResult(req):
 
     performance = {"march":100, "april":200, "may":300, "june":400, "july":500}
     date_intial = date.split("/")[0]
-    day = parser.parse(date_intial).day
+    month_ini = parser.parse(date_intial).month
     result=''
     try:
         conn = Connector().getConn();
-        result = query_exec("select * from pres_w_rx_repatha_short limit 1 offset "+ str(day), conn)
+        result = query_exec("select * from pres_w_rx_repatha_short limit 1 offset "+ str(month_ini), conn)
     except  ValueError:
         print ValueError
 
-    speech ="The performance for "+str(date)+"is" + str(result.fetchall()[0][13])
+    speech ="The performance for "+str(date)+" is " + str(result.fetchall()[0][13])
 
     # if date_original.lower() in performance:
     #     speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
