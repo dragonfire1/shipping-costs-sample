@@ -5,7 +5,6 @@ import json
 import os
 
 from dateutil import parser
-
 ##Custom connector
 from db_connector import Connector
 ##
