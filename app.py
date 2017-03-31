@@ -56,7 +56,7 @@ def makeWebhookResult(req):
     result=''
     try:
         conn = Connector().getConn();
-        result = query_exec("select * from pres_w_rx_repatha_short limit 1 offset "+ str(month_ini), conn)
+        result = query_exec("select * from pres_w_rx_repatha_short limit 1 offset "+ str(month_ini-1), conn)
     except  ValueError:
         print ValueError
 
