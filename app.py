@@ -21,30 +21,7 @@ def query_exec(query,conn):
     curr.execute(query)
     return curr
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    req = request.get_json(silent=True, force=True)
-
-    print("Request:")
-    print(json.dumps(req, indent=4))
-
-    res = makeWebhookResult(req)
-
-    res = json.dumps(res, indent=4)
-    print(res)
-    r = make_response(res)
-    r.headers['Content-Type'] = 'application/json'
-    return r
-
-def makeWebhookResult(req):
-    if req.get("result").get("action") != "support.performace_try":
-        return {
-        "speech": "No such action",
-        "displayText": "no such action",
-        #"data": {},
-        # "contextOut": [],
-        "source": "apiai-performance-chat-bot-python"
-    }
+def performace(req):
     result = req.get("result")
     parameters = result.get("parameters")
     date = parameters.get("date-period")
@@ -73,6 +50,73 @@ def makeWebhookResult(req):
     return {
         "speech": speech,
         "displayText": speech,
+        #"data": {},
+        # "contextOut": [],
+        "source": "apiai-performance-chat-bot-python"
+    }
+
+def customer_list(req):
+
+    result = req.get("result")
+    parameters = result.get("parameters")
+    customer = parameters.get("customer")
+
+    try:
+        conn = Connector().getConn();
+        result = query_exec("select distinct(cust_affl_name) from pres_w_rx_repatha_short", conn)
+    except  ValueError:
+        print ValueError
+    speech=''
+    for name in result.fetchall():
+        speech = speech+", "+name[0]
+
+    speech ="The customers are is " + speech[1:]
+
+    # if date_original.lower() in performance:
+    #     speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
+    # else:
+    #     speech = "The performance for " + str(result.fetchall[1]) + " is "+str(performance['april'])
+
+    print("Response:")
+    print(speech)
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        #"data": {},
+        # "contextOut": [],
+        "source": "apiai-performance-chat-bot-python"
+    }
+
+
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    req = request.get_json(silent=True, force=True)
+
+    print("Request:")
+    print(json.dumps(req, indent=4))
+
+    res = makeWebhookResult(req)
+
+    res = json.dumps(res, indent=4)
+    print(res)
+    r = make_response(res)
+    r.headers['Content-Type'] = 'application/json'
+    return r
+
+def makeWebhookResult(req):
+    action_name = req.get("result").get("action")
+
+    indent_response_call_dict = {"support.performance_try":performace(req),"support.customer_list":customer_list(req)}
+
+    if action_name in indent_response_call_dict:
+        res = indent_response_call_dict[action_name]
+        return res
+    else:
+        return {
+        "speech": "No such action",
+        "displayText": "no such action",
         #"data": {},
         # "contextOut": [],
         "source": "apiai-performance-chat-bot-python"
