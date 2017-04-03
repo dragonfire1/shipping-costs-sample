@@ -108,10 +108,10 @@ def webhook():
 def makeWebhookResult(req):
     action_name = req.get("result").get("action")
 
-    indent_response_call_dict = {"support.performance_try":performace(req),"support.customer_list":customer_list(req)}
+    indent_response_call_dict = {"support.performance_try":performace,"support.customer_list":customer_list}
 
     if action_name in indent_response_call_dict:
-        res = indent_response_call_dict[action_name]
+        res = indent_response_call_dict[action_name](req)
         return res
     else:
         return {

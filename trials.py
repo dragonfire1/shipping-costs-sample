@@ -10,8 +10,10 @@ def query_exec(query,conn):
 def zero(s):
      print s
 
-d = {"may":zero("this")}
-d["may"]
+d = {"may":zero}
+d["may"]("this")
+d["may"]("that")
+d["may"]("eerything")
 
 # performance = {"March":100, "April":200, "May":300, "June":400, "July":500}
 # date="2016-12-1"
