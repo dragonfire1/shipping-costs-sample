@@ -29,11 +29,12 @@ def performace(req):
 
     performance = {"march":100, "april":200, "may":300, "june":400, "july":500}
     date_intial = date.split("/")[0]
+    date_end = date.split("/")[1]
     month_ini = parser.parse(date_intial).month
     result=''
     try:
         conn = Connector().getConn();
-        result = query_exec("select * from pres_w_rx_repatha_short limit 1 offset "+ str(month_ini-1), conn)
+        result = query_exec("select * from d_repatha_sales where to_date(week,'MM/DD/YYYY') > to_date('"+date_intial+"',YYYY-MM-DD) and to_date(week,''MM/DD/YYYY') < to_date('"+date_end+"',YYYY-MM_DD)" , conn)
     except  ValueError:
         print ValueError
 
