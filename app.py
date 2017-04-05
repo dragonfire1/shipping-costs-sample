@@ -34,11 +34,11 @@ def performace(req):
     result=''
     try:
         conn = Connector().getConn();
-        result = query_exec("select * from d_repatha_sales where to_date(week,'MM/DD/YYYY') > to_date('"+date_intial+"','YYYY-MM-DD') and to_date(week,'MM/DD/YYYY') < to_date('"+date_end+"','YYYY-MM_DD')" , conn)
+        result = query_exec("select sum(sales) from d_repatha_sales where to_date(week,'MM/DD/YYYY') > to_date('"+date_intial+"','YYYY-MM-DD') and to_date(week,'MM/DD/YYYY') < to_date('"+date_end+"','YYYY-MM_DD')" , conn)
     except  ValueError:
         print ValueError
 
-    speech ="The performance for "+str(date)+" is " + str(result.fetchall()[0][13])
+    speech ="The performance for "+str(date)+" is " + str(result.fetchall()[0])
 
     # if date_original.lower() in performance:
     #     speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
