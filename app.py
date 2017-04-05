@@ -38,7 +38,7 @@ def performace(req):
     except  ValueError:
         print ValueError
 
-    speech ="The performance for "+str(date)+" is " + str(result.fetchall()[0])
+    speech ="The performance for "+str(date)+" is " + str(result.fetchall()[0][0])
 
     # if date_original.lower() in performance:
     #     speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
