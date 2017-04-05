@@ -34,7 +34,7 @@ def performace(req):
     result=''
     try:
         conn = Connector().getConn();
-        result = query_exec("select * from d_repatha_sales where to_date(week,'MM/DD/YYYY') > to_date('"+date_intial+"',YYYY-MM-DD) and to_date(week,''MM/DD/YYYY') < to_date('"+date_end+"',YYYY-MM_DD)" , conn)
+        result = query_exec("select * from d_repatha_sales where to_date(week,'MM/DD/YYYY') > to_date('"+date_intial+"',YYYY-MM-DD) and to_date(week,'MM/DD/YYYY') < to_date('"+date_end+"','YYYY-MM_DD')" , conn)
     except  ValueError:
         print ValueError
 
