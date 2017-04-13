@@ -19,7 +19,7 @@ app = Flask(__name__)
 default_row = 7
 
 
-def query_exec(query,conn):
+def query_exec(query ,conn):
     curr = conn.cursor()
     curr.execute(query)
     return curr
@@ -36,7 +36,7 @@ def performace(req):
     month_ini = parser.parse(date_intial).month
     result=''
     try:
-        conn = Connector().getConn();
+        conn = Connector().getConn()
         result = query_exec("select round(sum(sales),3) from d_repatha_sales where to_date(week,'MM/DD/YYYY') > to_date('"+date_intial+"','YYYY-MM-DD') and to_date(week,'MM/DD/YYYY') < to_date('"+date_end+"','YYYY-MM_DD')" , conn)
     except  ValueError:
         print ValueError
@@ -114,14 +114,13 @@ def limit_builder(agg, num):
     else:
         statement += " limit "+default_row
 
-    return statement
+    return statement;
 
 
-
-
-def sales_builder:
-    ## TODO add TRX, NRX etc when we get data
+def sales_builder():
+    # TODO add TRX, NRX etc when we get data
     return "sales"
+
 
 def generic_sql_builder(req):
 
