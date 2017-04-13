@@ -16,6 +16,9 @@ from flask import make_response
 # Flask app should start in global layout
 app = Flask(__name__)
 
+default_row = 7
+
+
 def query_exec(query,conn):
     curr = conn.cursor()
     curr.execute(query)
@@ -49,12 +52,12 @@ def performace(req):
     print(speech)
 
     return {
-        "speech": speech,
-        "displayText": speech,
-        #"data": {},
-        # "contextOut": [],
-        "source": "apiai-performance-chat-bot-python"
-    }
+            "speech": speech,
+            "displayText": speech,
+            #"data": {},
+            # "contextOut": [],
+            "source": "apiai-performance-chat-bot-python"
+        }
 
 def customer_list(req):
 
@@ -89,7 +92,122 @@ def customer_list(req):
         "source": "apiai-performance-chat-bot-python"
     }
 
+def agg_builder(agg):
+    if agg is not None:
+        agg_clause = ["max","avg","sum"]  ## check if it is one of the defined aggregration clauses else sum
+        if agg.lower in agg_clause:
+            return agg
+        else:
+            return "sum"
+    else:
+        return sum
 
+
+def limit_builder(agg, num):
+    statement = "asc"
+    if agg is not None:
+        if agg.lower() in ["worst"]:  ## if worst is queried then apply asc clause to order by statement else desc
+            statement = " asc "
+    if num is not None:
+        ## if worst is queried then apply asc clause to order by statement else desc
+        statement += " limit "+num
+    else:
+        statement += " limit "+default_row
+
+    return statement
+
+
+
+
+def sales_builder:
+    ## TODO add TRX, NRX etc when we get data
+    return "sales"
+
+def generic_sql_builder(req):
+
+    result = req.get("result")
+    orginial_query = result.get("resolvedQuery")
+    parameters = result.get("parameters")
+    customer = parameters.get("customer")
+    agg = parameters("aggregrations")
+    sales = parameters("sales")
+    query = "select "
+
+    if customer is not None:
+        if agg is not None:
+            agg_value = agg_builder(agg)
+
+    try:
+        conn = Connector().getConn();
+        result = query_exec("select distinct(cust_affl_name) from pres_w_rx_repatha_short", conn)
+    except  ValueError:
+        print ValueError
+    speech=''
+    for name in result.fetchall():
+        speech = speech+", "+name[0]
+
+    speech ="The customers are is " + speech[1:]
+
+    # if date_original.lower() in performance:
+    #     speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
+    # else:
+    #     speech = "The performance for " + str(result.fetchall[1]) + " is "+str(performance['april'])
+
+    print("Response:")
+    print(speech)
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        #"data": {},
+        # "contextOut": [],
+        "source": "apiai-performance-chat-bot-python"
+    }
+
+
+
+def top_bottom_customers(req):
+
+    result = req.get("result")
+    parameters = result.get("parameters")
+    customer = parameters.get("customer")
+    number = parameters.get("number")
+    agg = parameters.get("aggregration")
+
+    query ="select cust_affl_name, "
+    agg_clause = agg_builder(agg)
+    colum = sales_builder(parameters.get("sales"))
+
+    query+=agg_clause+"("+colum+") from d_repatha_sales group by cust_affl_name order by "+ agg_clause+"("+colum+") "
+
+    query += limit_builder(agg,number)
+
+    try:
+        conn = Connector().getConn();
+        result = query_exec(query, conn)
+    except  ValueError:
+        print ValueError
+    speech=''
+    for rows in result.fetchall():
+        speech = speech+", "+rows
+
+    speech ="The customers are is " + speech[1:]
+
+    # if date_original.lower() in performance:
+    #     speech = "The performance for the " + str(date_original) + " is " + str(performance[str(date_original.lower())])
+    # else:
+    #     speech = "The performance for " + str(result.fetchall[1]) + " is "+str(performance['april'])
+
+    print("Response:")
+    print(speech)
+
+    return {
+        "speech": speech,
+        "displayText": speech,
+        #"data": {},
+        # "contextOut": [],
+        "source": "apiai-performance-chat-bot-python"
+    }
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -109,7 +227,8 @@ def webhook():
 def makeWebhookResult(req):
     action_name = req.get("result").get("action")
 
-    indent_response_call_dict = {"support.performance_try":performace,"support.customer_list":customer_list}
+    indent_response_call_dict = {"support.performance_try":performace,"support.customer_list":customer_list,
+                                 "support.generic":generic_sql_builder,"support.top_bottom":top_bottom_customers}
 
     if action_name in indent_response_call_dict:
         res = indent_response_call_dict[action_name](req)
