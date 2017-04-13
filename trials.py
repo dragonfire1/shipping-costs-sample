@@ -47,3 +47,5 @@ import nltk
 
 text = nltk.word_tokenize("what are the sales of my customers")
 print(nltk.pos_tag(text))
+
+

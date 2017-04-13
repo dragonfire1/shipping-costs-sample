@@ -93,33 +93,33 @@ def customer_list(req):
     }
 
 def agg_builder(agg):
-    if agg is not None:
+    if agg !="" and agg is not None:
         agg_clause = ["max","avg","sum"]  ## check if it is one of the defined aggregration clauses else sum
-        if agg.lower in agg_clause:
+        if agg.lower() in agg_clause:
             return agg
         else:
             return "sum"
     else:
-        return sum
+        return "sum"
 
 
 def limit_builder(agg, num):
-    statement = "asc"
-    if agg is not None:
+    statement = "desc"
+    if agg  !="" and agg is not None:
         if agg.lower() in ["worst"]:  ## if worst is queried then apply asc clause to order by statement else desc
             statement = " asc "
-    if num is not None:
+    if num !="" and num is not None:
         ## if worst is queried then apply asc clause to order by statement else desc
         statement += " limit "+num
     else:
-        statement += " limit "+default_row
+        statement += " limit "+str(default_row)+""
 
     return statement;
 
 
 def sales_builder(sales):
     # TODO add TRX, NRX etc when we get data
-    return "sales"
+    return "sales";
 
 
 def generic_sql_builder(req):
@@ -171,16 +171,17 @@ def top_bottom_customers(req):
     parameters = result.get("parameters")
     customer = parameters.get("customer")
     number = parameters.get("number")
-    agg = parameters.get("aggregration")
+    agg = parameters.get("aggregrations")
 
     query ="select cust_affl_name, "
     agg_clause = agg_builder(agg)
-    colum = sales_builder(parameters.get("sales"))
+    sale = parameters.get("sales")
+    colum = sales_builder(sale)
 
-    query+=agg_clause+"("+colum+") from d_repatha_sales group by cust_affl_name order by "+ agg_clause+"("+colum+") "
+    query+=str(agg_clause)+"("+str(colum)+") from d_repatha_sales group by cust_affl_name order by "+ str(agg_clause)+"("+str(colum)+") "
 
     query += limit_builder(agg,number)
-
+    print query
     try:
         conn = Connector().getConn();
         result = query_exec(query, conn)
@@ -188,7 +189,7 @@ def top_bottom_customers(req):
         print ValueError
     speech=''
     for rows in result.fetchall():
-        speech = speech+", "+rows
+        speech = speech+", "+str(rows)
 
     speech ="The customers are is " + speech[1:]
 
