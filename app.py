@@ -117,7 +117,7 @@ def limit_builder(agg, num):
     return statement;
 
 
-def sales_builder():
+def sales_builder(sales):
     # TODO add TRX, NRX etc when we get data
     return "sales"
 
